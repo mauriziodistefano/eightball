@@ -59,19 +59,4 @@ jobs:
           FOD_UPLOADER_OPTS: "-ep 2 -pp 0"
           FOD_UPLOADER_NOTES: 'Triggered by GitHub Actions (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})'
           
-      # Pull SAST issues from Fortify on Demand and generate SARIF output
-      - name: Download Results
-        uses: fortify/gha-fod-generate-sarif@master
-        with:
-          base-url: https://ams.fortify.com/
-          tenant: ${{ secrets.FOD_TENANT }}
-          user: ${{ secrets.FOD_USER }}
-          password: ${{ secrets.FOD_PAT }}
-          release-id: ${{ secrets.FOD_RELEASE_ID }}
-          output: ./sarif/output.sarif
-      
-      # Import Fortify on Demand results to GitHub Security Code Scanning
-      - name: Import Results
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ./sarif/output.sarif
+     

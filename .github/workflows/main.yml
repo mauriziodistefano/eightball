@@ -53,8 +53,8 @@ jobs:
         env:                                            
           URL: ${{ secrets.SSC_URL }}
           TOKEN: ${{ secrets.SSC_UPLOAD_TOKEN }}
-          APPLICATION: "My Application"
-          VERSION: "1.0"
+          APPLICATION: "eightball"
+          VERSION: "1"
           BUILD_OPTS: "-bt none"
 
       ### Archive ScanCentral Client logs on failure ###

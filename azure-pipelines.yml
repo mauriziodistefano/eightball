@@ -6,14 +6,43 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+  - job: fortify
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: self                       # Check out source code
+      #- task:  ... setup build tool(s)      # Set up build tool(s) required to build your project
+      - task: Bash@3 # Or PowerShell@2, using the PowerShell variant of the script below
+        displayName: 'Run Fortify AST scan'
+        inputs:
+          targetType: 'inline'
+          # Bash variant
+          script: |
+            # Bootstrap fcli
+            npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env init --tools=fcli:bootstrapped
+            # Add fcli to PATH and set related environment variables for subsequent steps in current script
+            source <(npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env shell)
+            # Alternatively, to make fcli ALSO available for subsequent tasks:
+            # source <(npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env ado --output-as=shell)
+            # Alternatively, to make fcli ONLY available for subsequent tasks:
+            # npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env ado
+            "${FCLI_CMD:-fcli}" action run ci  # Or any other fcli-based custom workflow
+          # PowerShell variant
+          # script: |
+          #   # Bootstrap fcli
+          #   npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env init --tools=fcli:bootstrapped
+          #   # Add fcli to PATH and set related environment variables for subsequent steps in current script
+          #   npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env pwsh | Out-String | Invoke-Expression
+          #   # Alternatively, to make fcli ALSO available for subsequent tasks:
+          #   # npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env ado --output-as=pwsh | Out-String | Invoke-Expression
+          #   # Alternatively, to make fcli ONLY available for subsequent tasks:
+          #   # npx @fortify/setup@$(FORTIFY_SETUP_VERSION) env ado
+          #   & "${env:FCLI_CMD:-fcli}" action run ci  # Or any other fcli-based custom workflow
+        env:
+          SSC_URL: $(SSC_URL)
+          SSC_TOKEN: $(SSC_TOKEN)
+          SC_SAST_TOKEN: $(SC_SAST_TOKEN)
+          # SSC_APPVERSION: MyApp:main  # Optional: defaults to repo:branch
+          FORTIFY_SETUP_VERSION: v2.1   # Or v2 for latest features, v2.1.2 for stability

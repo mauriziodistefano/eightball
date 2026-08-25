@@ -6,6 +6,8 @@
 trigger:
 - master
 
+variables:
+  - group: fortify  # Variable group containing SSC_URL, SSC_TOKEN, SC_SAST_TOKEN
 
 jobs:
   - job: fortify

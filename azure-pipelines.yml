@@ -46,5 +46,5 @@ jobs:
           SSC_URL: $(SSC_URL)
           SSC_TOKEN: $(SSC_TOKEN)
           SC_SAST_TOKEN: $(SC_SAST_TOKEN)
-          # SSC_APPVERSION: MyApp:main  # Optional: defaults to repo:branch
+          SSC_APPVERSION: eightball_MDS:1.0  # Optional: defaults to repo:branch
           FORTIFY_SETUP_VERSION: v2.1   # Or v2 for latest features, v2.1.2 for stability
